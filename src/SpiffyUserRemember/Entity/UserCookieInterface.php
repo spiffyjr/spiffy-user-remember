@@ -8,7 +8,7 @@ interface UserCookieInterface
 {
     /**
      * @param int $token
-     * @return UserCookieInterface
+     * @return $this
      */
     public function setToken($token);
 
@@ -19,12 +19,12 @@ interface UserCookieInterface
 
     /**
      * @param UserInterface $user
-     * @return UserCookieInterface
+     * @return $this
      */
     public function setUser(UserInterface $user);
 
     /**
-     * @return UserInterface
+     * @return $this
      */
     public function getUser();
 }

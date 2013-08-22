@@ -3,14 +3,14 @@
 return array(
     'doctrine' => array(
         'driver' => array(
-            'zfc_user_remember' => array(
+            'spiffy_user_remember_orm' => array(
                 'class' => 'Doctrine\ORM\Mapping\Driver\XmlDriver',
                 'paths' => array(__DIR__ . '/orm')
             ),
 
             'orm_default' => array(
                 'drivers' => array(
-                    'SpiffyUserRemember\Entity' => 'zfc_user_remember',
+                    'SpiffyUserRemember\Entity' => 'spiffy_user_remember_orm',
                 )
             )
         )
@@ -18,7 +18,7 @@ return array(
 
     'service_manager' => include 'service.config.php',
 
-    'zfc_user' => array(
+    'spiffy_user' => array(
         'extensions' => array(
             'remember'          => array(
                 'type' => 'SpiffyUserRemember\Extension',
@@ -28,7 +28,6 @@ return array(
                     'salt'         => 'change_the_default_salt!',
                 )
             ),
-            'remember_doctrine' => 'SpiffyUserRemember\DoctrineExtension',
         )
     ),
 );

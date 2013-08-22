@@ -2,6 +2,10 @@
 
 namespace SpiffyUserRemember;
 
+use SpiffyUser\Entity\UserInterface;
+use SpiffyUser\Extension\AbstractExtension;
+use SpiffyUser\Extension\Authentication;
+use SpiffyUserRemember\Authentication\RememberAdapter;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Result;
 use Zend\EventManager\EventInterface;
@@ -10,10 +14,6 @@ use Zend\Http\Header\SetCookie;
 use Zend\Http\Request as HttpRequest;
 use Zend\Stdlib\RequestInterface;
 use Zend\Stdlib\ResponseInterface;
-use SpiffyUser\Entity\UserInterface;
-use SpiffyUser\Extension\AbstractExtension;
-use SpiffyUser\Extension\Authentication;
-use SpiffyUserRemember\Authentication\RememberAdapter;
 
 class Extension extends AbstractExtension
 {
@@ -37,7 +37,7 @@ class Extension extends AbstractExtension
      */
     protected $options = array(
         'duration'     => 1209600,
-        'entity_class' => 'Application\Entity\User',
+        'entity_class' => 'Application\Entity\UserCookie',
         'salt'         => 'change_the_default_salt!',
     );
 
@@ -102,8 +102,9 @@ class Extension extends AbstractExtension
         list($identity, $token) = explode(':', $cookie->{static::COOKIE_NAME});
 
         $manager    = $this->getManager();
-        $results    = $manager->getEventManager()->trigger(static::EVENT_GET_COOKIE, $token);
-        $userCookie = $results->last();
+        $userCookie = $this->getObjectRepository()->findOneBy(array('token' => $token));
+
+        $manager->getEventManager()->trigger(static::EVENT_GET_COOKIE, $userCookie);
 
         if (!$userCookie || !$userCookie->getUser()->getEmail() === $identity) {
             return null;
@@ -186,6 +187,13 @@ class Extension extends AbstractExtension
     public function onLogoutPost(EventInterface $e)
     {
         $this->invalidateCookie();
+
+        $om      = $this->getObjectManager();
+        $cookies = $this->getObjectRepository()->findAll();
+        foreach ($cookies as $cookie) {
+            $om->remove($cookie);
+        }
+        $om->flush();
     }
 
     /**
@@ -194,13 +202,13 @@ class Extension extends AbstractExtension
     public function getCookiePrototype()
     {
         if (!$this->cookiePrototype) {
-            $userClass = $this->options['entity_class'];
-            if (!class_exists($userClass)) {
+            $userCookieClass = $this->options['entity_class'];
+            if (!class_exists($userCookieClass)) {
                 // todo: throw exception
-                echo 'userclass ' . $userClass . ' could not be found';
+                echo 'userclass ' . $userCookieClass . ' could not be found';
                 exit;
             }
-            $this->cookiePrototype = new $userClass();
+            $this->cookiePrototype = new $userCookieClass();
         }
         return $this->cookiePrototype;
     }
@@ -224,6 +232,10 @@ class Extension extends AbstractExtension
                ->setToken($token);
 
         $manager->getEventManager()->trigger(static::EVENT_GENERATE_COOKIE, $cookie);
+
+        $om = $this->getObjectManager();
+        $om->persist($cookie);
+        $om->flush();
     }
 
     /**
@@ -245,12 +257,34 @@ class Extension extends AbstractExtension
             return;
         }
 
-        $setCookie = new SetCookie(static::COOKIE_NAME, null, -1, '/');
+        $setCookie = new SetCookie(static::COOKIE_NAME, null, 0, '/');
         $this->response->getHeaders()->addHeader($setCookie);
 
         $userCookie = $this->getCookie();
         if ($userCookie) {
             $this->getManager()->getEventManager()->trigger(static::EVENT_INVALIDATE_COOKIE, $userCookie);
+
+            $om = $this->getObjectManager();
+            $om->remove($userCookie);
+            $om->flush();
         }
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectRepository
+     */
+    protected function getObjectRepository()
+    {
+        return $this->getObjectManager()->getRepository($this->options['entity_class']);
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectManager
+     */
+    protected function getObjectManager()
+    {
+        /** @var \SpiffyUser\Extension\Doctrine $doctrine */
+        $doctrine = $this->getManager()->get('doctrine');
+        return $doctrine->getObjectManager();
     }
 }

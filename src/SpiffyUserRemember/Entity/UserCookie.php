@@ -3,7 +3,6 @@
 namespace SpiffyUserRemember\Entity;
 
 use SpiffyUser\Entity\UserInterface;
-use SpiffyUserRemember\Entity\UserCookieInterface;
 
 class UserCookie implements UserCookieInterface
 {
@@ -19,7 +18,7 @@ class UserCookie implements UserCookieInterface
 
     /**
      * @param string $token
-     * @return UserCookie
+     * @return $this
      */
     public function setToken($token)
     {
@@ -37,7 +36,7 @@ class UserCookie implements UserCookieInterface
 
     /**
      * @param UserInterface $user
-     * @return UserCookie
+     * @return $this
      */
     public function setUser(UserInterface $user)
     {
