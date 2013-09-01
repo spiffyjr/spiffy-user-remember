@@ -7,13 +7,13 @@ use SpiffyUser\Entity\UserInterface;
 interface UserCookieInterface
 {
     /**
-     * @param int $token
+     * @param string $token
      * @return $this
      */
     public function setToken($token);
 
     /**
-     * @return int
+     * @return string
      */
     public function getToken();
 

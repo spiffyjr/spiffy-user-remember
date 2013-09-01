@@ -17,8 +17,7 @@ class UserCookie implements UserCookieInterface
     protected $token;
 
     /**
-     * @param string $token
-     * @return $this
+     * {@inheritDoc}
      */
     public function setToken($token)
     {
@@ -27,7 +26,7 @@ class UserCookie implements UserCookieInterface
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getToken()
     {
@@ -35,8 +34,7 @@ class UserCookie implements UserCookieInterface
     }
 
     /**
-     * @param UserInterface $user
-     * @return $this
+     * {@inheritDoc}
      */
     public function setUser(UserInterface $user)
     {
@@ -45,7 +43,7 @@ class UserCookie implements UserCookieInterface
     }
 
     /**
-     * @return UserInterface
+     * {@inheritDoc}
      */
     public function getUser()
     {
