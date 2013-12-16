@@ -13,6 +13,13 @@ return array(
                     'SpiffyUserRemember\Entity' => 'spiffy_user_remember_orm',
                 )
             )
+        ),
+        'entity_resolver' => array(
+            'orm_default' => array(
+                'resolvers' => array(
+                    'SpiffyUserRemember\Entity\UserCookieInterface' => 'SpiffyUserRemember\Entity\UserCookie'
+                )
+            )
         )
     ),
 

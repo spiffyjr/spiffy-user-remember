@@ -9,7 +9,7 @@ trait UserRememberTrait
     /**
      * @var array
      *
-     * @ORM\OneToMany(targetEntity="SpiffyUserRemember\Entity\UserCookie", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="SpiffyUserRemember\Entity\UserCookieInterface", mappedBy="user")
      */
     protected $cookies = array();
 
