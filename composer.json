@@ -2,13 +2,13 @@
     "name": "spiffy/spiffy-user-remember",
     "require": {
         "php": ">=5.3.3",
-        "zendframework/zend-authentication": "2.*",
-        "zendframework/zend-eventmanager": "2.*",
-        "zendframework/zend-http": "2.*",
-        "zendframework/zend-modulemanager": "2.*",
-        "zendframework/zend-servicemanager": "2.*",
-        "zendframework/zend-stdlib": "2.*",
-        "spiffy/spiffy-user": "dev-master"
+        "zendframework/zend-authentication": "~2.2",
+        "zendframework/zend-eventmanager": "~2.2",
+        "zendframework/zend-http": "~2.2",
+        "zendframework/zend-modulemanager": "~2.2",
+        "zendframework/zend-servicemanager": "~2.2",
+        "zendframework/zend-stdlib": "~2.2",
+        "spiffy/spiffy-user": "~1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "3.*",
@@ -19,6 +19,11 @@
         "psr-0": {
             "SpiffyUserRemember": "src/",
             "SpiffyUserRememberTest": "test/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "1.x-dev"
         }
     }
 }
