@@ -82,7 +82,7 @@ class Extension extends AbstractExtension
             Authentication::EVENT_LOGIN_PREPARE_FORM,
             array($this, 'onPrepareLoginForm')
         );
-        $this->listeners[] = $events->attach(Authentication::EVENT_LOGOUT_POST, array($this, 'onLogoutPost'));
+        $this->listeners[] = $events->attach(Authentication::EVENT_LOGOUT_PRE, array($this, 'onLogoutPre'));
     }
 
     /**
@@ -184,16 +184,20 @@ class Extension extends AbstractExtension
     /**
      * @param EventInterface $e
      */
-    public function onLogoutPost(EventInterface $e)
+    public function onLogoutPre(EventInterface $e)
     {
         $this->invalidateCookie();
 
-        $om      = $this->getObjectManager();
-        $cookies = $this->getObjectRepository()->findAll();
-        foreach ($cookies as $cookie) {
-            $om->remove($cookie);
+        $authService = $this->authenticationService;
+
+        if ($authService->hasIdentity()) {
+            $om      = $this->getObjectManager();
+            $cookies = $this->getObjectRepository()->findBy(array('user' => $authService->getIdentity()));
+            foreach ($cookies as $cookie) {
+                $om->remove($cookie);
+            }
+            $om->flush();
         }
-        $om->flush();
     }
 
     /**
