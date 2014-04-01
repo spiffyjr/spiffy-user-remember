@@ -21,6 +21,8 @@ class Extension extends AbstractExtension
     const EVENT_GENERATE_COOKIE   = 'remember.generateCookie';
     const EVENT_GET_COOKIE        = 'remember.getCookie';
     const EVENT_INVALIDATE_COOKIE = 'remember.invalidateCookie';
+    const EVENT_LOGIN_PRE         = 'remember.login.pre';
+    const EVENT_LOGIN_POST        = 'remember.login.post';
 
     /**
      * @var AuthenticationService
@@ -127,7 +129,14 @@ class Extension extends AbstractExtension
             return null;
         }
 
+        $manager = $this->getManager();
+        $event   = $manager->getEvent();
+        $manager->getEventManager()->trigger(static::EVENT_LOGIN_PRE, $event);
+
         $result = $authService->authenticate($adapter);
+
+        $event->setParams(array('result' => $result));
+        $manager->getEventManager()->trigger(static::EVENT_LOGIN_POST, $event);
 
         $this->invalidateCookie();
 
