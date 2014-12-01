@@ -159,6 +159,9 @@ class Extension extends AbstractExtension
             'type' => 'checkbox',
             'options' => array(
                 'label' => 'Remember me on this computer'
+            ),
+            'attributes' => array(
+                'value' => 1
             )
         ));
     }
